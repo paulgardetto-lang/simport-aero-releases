@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Only README.md and .github/ may be stored here
+      - name: Only README.md and this check may be stored here
         run: |
-          extra=$(git ls-files | grep -v -x -e 'README.md' -e '\.github/.*' || true)
+          extra=$(git ls-files | grep -v -x -F -e 'README.md' -e '.github/workflows/channel-check.yml' || true)
           if [ -n "$extra" ]; then
             echo "Not allowed in the update channel (installers go on releases, code stays in product repos):"
             echo "$extra"
             exit 1
           fi
-          echo "OK: only README.md and .github/ are stored."
+          echo "OK: only README.md and the channel check are stored."

@@ -1,0 +1,21 @@
+# Fails if anything other than the README and this check is stored in the update channel (REQ-030).
+name: channel check
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  only-allowed-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Only README.md and .github/ may be stored here
+        run: |
+          extra=$(git ls-files | grep -v -x -e 'README.md' -e '\.github/.*' || true)
+          if [ -n "$extra" ]; then
+            echo "Not allowed in the update channel (installers go on releases, code stays in product repos):"
+            echo "$extra"
+            exit 1
+          fi
+          echo "OK: only README.md and .github/ are stored."
